@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cloud-Plattform Schulmaterial</title>
+  <style>
+    :root {
+      --primary-color: #2563eb;
+      --secondary-color: #1e40af;
+      --background-color: #f8fafc;
+      --text-color: #1e293b;
+      --border-radius: 8px;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+      padding: 2rem;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      color: var(--text-color);
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+      font-weight: 700;
+    }
+
+    select, input[type="file"] {
+      margin: 1rem 0;
+      padding: 0.75rem;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--border-radius);
+      background-color: white;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      padding-right: 2.5rem;
+    }
+
+    .upload-section {
+      background-color: white;
+      padding: 2rem;
+      border-radius: var(--border-radius);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem;
+    }
+
+    .file-list {
+      margin-top: 2rem;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .file-item {
+      background: white;
+      padding: 1.25rem;
+      border-radius: var(--border-radius);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .file-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .file-item span.offiziell {
+      color: #16a34a;
+      font-weight: 600;
+      margin-left: 0.5rem;
+    }
+
+    button {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.2s;
+    }
+
+    button:hover {
+      background-color: var(--secondary-color);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--text-color);
+    }
+
+    .upload-button {
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Cloud-Plattform für Schulmaterial</h1>
+
+    <div class="upload-section">
+      <div class="form-group">
+        <label for="fach">Fach wählen:</label>
+        <select id="fach">
+          <option value="mathe">Mathematik</option>
+          <option value="deutsch">Deutsch</option>
+          <option value="informatik">Informatik</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="fileUpload">Datei hochladen:</label>
+        <input type="file" id="fileUpload">
+        <button class="upload-button" onclick="uploadFile()">Hochladen</button>
+      </div>
+    </div>
+
+    <div class="file-list" id="fileList"></div>
+
+    <script>
+      let files = [];
+
+      function uploadFile() {
+        const fileInput = document.getElementById('fileUpload');
+        const fach = document.getElementById('fach').value;
+
+        if (fileInput.files.length === 0) return alert("Bitte wähle eine Datei aus.");
+
+        const file = fileInput.files[0];
+        files.push({ name: file.name, fach, offiziell: false });
+
+        fileInput.value = "";
+        renderFileList();
+      }
+
+      function renderFileList() {
+        const container = document.getElementById('fileList');
+        container.innerHTML = '';
+
+        files.forEach((file, index) => {
+          const item = document.createElement('div');
+          item.className = 'file-item';
+
+          const name = document.createElement('span');
+          name.innerHTML = `${file.name} (${file.fach})` + (file.offiziell ? " <span class='offiziell'>(offiziell)</span>" : "");
+
+          const button = document.createElement('button');
+          button.innerText = file.offiziell ? "Entfernen (offiziell)" : "Als offiziell markieren";
+          button.onclick = () => {
+            files[index].offiziell = !files[index].offiziell;
+            renderFileList();
+          };
+
+          item.appendChild(name);
+          item.appendChild(button);
+          container.appendChild(item);
+        });
+      }
+    </script>
+  </div>
+</body>
+</html>
